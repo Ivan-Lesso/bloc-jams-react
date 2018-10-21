@@ -12,6 +12,7 @@ class Album extends Component {
     this.state = {
       album: album,
       currentSong: album.songs[0],
+      currentSongIndex: 0,
       isPlaying: false
     };
 
@@ -26,20 +27,52 @@ class Album extends Component {
     this.audioElement.pause();
     this.setState({ isPlaying: false });
   }
-  setSong(song) {
+  setSong(song, index) {
     this.audioElement.src = song.audioSrc;
-    this.setState({ currentSong: song });
+    this.setState({ currentSong: song, currentSongIndex: index });
   }
-  handleSongClick(song) {
+  handleSongClick(song,index) {
     const isSameSong = this.state.currentSong === song;
     if (this.state.isPlaying && isSameSong) {
       this.pause();
+      this.displayPlayIcon(index);
     } else {
-      if (!isSameSong) { this.setSong(song); }
+      if (!isSameSong) {
+        this.displaySongNumber(this.state.currentSongIndex);
+        this.setSong(song, index);
+      }
       this.play();
+      this.displayPauseIcon(index);
     }
   }
-
+  handleMouseEnter(song, index)
+  {
+    const isSameSong = this.state.currentSong === song;
+    if ((this.state.isPlaying && !isSameSong) || (!this.state.isPlaying)) this.displayPlayIcon(index);
+  }
+  handleMouseLeave(song, index)
+  {
+    const isSameSong = this.state.currentSong === song;
+    if((!this.state.isPlaying) || (this.state.isPlaying && !isSameSong)) this.displaySongNumber(index);
+  }
+  displayPauseIcon(index)
+  {
+    var songIconElement = document.getElementById("song_icon_"+index);
+    songIconElement.innerHTML = '';
+    songIconElement.className = 'icon ion-ios-pause';
+  }
+  displayPlayIcon(index)
+  {
+    var songIconElement = document.getElementById("song_icon_"+index);
+    songIconElement.innerHTML = '';
+    songIconElement.className = 'icon ion-ios-play';
+  }
+  displaySongNumber(index)
+  {
+    var songIconElement = document.getElementById("song_icon_"+index);
+    songIconElement.innerHTML = index + 1;
+    songIconElement.className = '';
+  }
   render() {
     return (
       <section className="album">
@@ -60,8 +93,8 @@ class Album extends Component {
           <tbody>
           {
             this.state.album.songs.map((song, index) =>
-            <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-              <td>{index + 1}</td>
+            <tr className="song" key={index} onClick={() => this.handleSongClick(song,index)} onMouseEnter={() => this.handleMouseEnter(song, index)} onMouseLeave={() => this.handleMouseLeave(song, index)}>
+              <td><span id={"song_icon_"+index}>{index + 1}</span></td>
               <td>{song.title}</td>
               <td>{(song.duration-(song.duration%=60))/60+(9<song.duration?':':':0')+Math.ceil(song.duration)}</td>
             </tr>
