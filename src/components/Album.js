@@ -13,7 +13,6 @@ class Album extends Component {
     this.state = {
       album: album,
       currentSong: album.songs[0],
-      currentSongIndex: 0,
       isPlaying: false
     };
 
@@ -28,59 +27,75 @@ class Album extends Component {
     this.audioElement.pause();
     this.setState({ isPlaying: false });
   }
-  setSong(song, index) {
+  setSong(song) {
     this.audioElement.src = song.audioSrc;
-    this.setState({ currentSong: song, currentSongIndex: index });
+    this.setState({ currentSong: song });
   }
-  handleSongClick(song,index) {
+  getSongIndex(song)
+  {
+    return this.state.album.songs.findIndex(item => song === item);
+  }
+  handleSongClick(song) {
     const isSameSong = this.state.currentSong === song;
     if (this.state.isPlaying && isSameSong) {
       this.pause();
-      this.displayPlayIcon(index);
+      this.displayPlayIcon(song);
     } else {
       if (!isSameSong) {
-        this.displaySongNumber(this.state.currentSongIndex);
-        this.setSong(song, index);
+        this.displaySongNumber(this.state.currentSong);
+        this.setSong(song);
       }
       this.play();
-      this.displayPauseIcon(index);
+      this.displayPauseIcon(song);
     }
   }
   handlePrevClick() {
-    //const currentIndex = this.state.album.songs.findIndex(song => this.state.currentSong === song);
-    const newIndex = Math.max(0, this.state.currentSongIndex - 1);
+    const currentIndex = this.getSongIndex(this.state.currentSong);
+    const newIndex = (currentIndex-1<0)?(this.state.album.songs.length-1):currentIndex-1;
     const newSong = this.state.album.songs[newIndex];
-    this.setSong(newSong, newIndex);
+    this.displaySongNumber(this.state.currentSong);
+    this.displayPauseIcon(newSong);
+    this.setSong(newSong);
     this.play();
-    this.displaySongNumber(this.state.currentSongIndex);
-    this.displayPauseIcon(newIndex);
   }
-  handleMouseEnter(song, index)
+  handleNextClick() {
+    const currentIndex = this.getSongIndex(this.state.currentSong);
+    const newIndex = (currentIndex+1>this.state.album.songs.length-1)?0:currentIndex+1;
+    const newSong = this.state.album.songs[newIndex];
+    this.displaySongNumber(this.state.currentSong);
+    this.displayPauseIcon(newSong);
+    this.setSong(newSong);
+    this.play();
+  }
+  handleMouseEnter(song)
   {
     const isSameSong = this.state.currentSong === song;
-    if ((this.state.isPlaying && !isSameSong) || (!this.state.isPlaying)) this.displayPlayIcon(index);
+    if ((this.state.isPlaying && !isSameSong) || (!this.state.isPlaying)) this.displayPlayIcon(song);
   }
-  handleMouseLeave(song, index)
+  handleMouseLeave(song)
   {
     const isSameSong = this.state.currentSong === song;
-    if((!this.state.isPlaying) || (this.state.isPlaying && !isSameSong)) this.displaySongNumber(index);
+    if((!this.state.isPlaying) || (this.state.isPlaying && !isSameSong)) this.displaySongNumber(song);
   }
-  displayPauseIcon(index)
+  displayPauseIcon(song)
   {
-    var songIconElement = document.getElementById("song_icon_"+index);
+    const currentIndex = this.getSongIndex(song);
+    var songIconElement = document.getElementById("song_icon_"+currentIndex);
     songIconElement.innerHTML = '';
     songIconElement.className = 'icon ion-ios-pause';
   }
-  displayPlayIcon(index)
+  displayPlayIcon(song)
   {
-    var songIconElement = document.getElementById("song_icon_"+index);
+    const currentIndex = this.getSongIndex(song);
+    var songIconElement = document.getElementById("song_icon_"+currentIndex);
     songIconElement.innerHTML = '';
     songIconElement.className = 'icon ion-ios-play';
   }
-  displaySongNumber(index)
+  displaySongNumber(song)
   {
-    var songIconElement = document.getElementById("song_icon_"+index);
-    songIconElement.innerHTML = index + 1;
+    const currentIndex = this.getSongIndex(song);
+    var songIconElement = document.getElementById("song_icon_"+currentIndex);
+    songIconElement.innerHTML = currentIndex + 1;
     songIconElement.className = '';
   }
   render() {
@@ -103,10 +118,10 @@ class Album extends Component {
           <tbody>
           {
             this.state.album.songs.map((song, index) =>
-            <tr className="song" key={index} onClick={() => this.handleSongClick(song,index)} onMouseEnter={() => this.handleMouseEnter(song, index)} onMouseLeave={() => this.handleMouseLeave(song, index)}>
+            <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleMouseEnter(song)} onMouseLeave={() => this.handleMouseLeave(song)}>
               <td><span id={"song_icon_"+index}>{index + 1}</span></td>
               <td>{song.title}</td>
-              <td>{(song.duration-(song.duration%=60))/60+(9<song.duration?':':':0')+Math.ceil(song.duration)}</td>
+              <td>{Math.ceil(song.duration)}</td>
             </tr>
           )
           }
@@ -115,8 +130,9 @@ class Album extends Component {
         <PlayerBar
           isPlaying={this.state.isPlaying}
           currentSong={this.state.currentSong}
-          handleSongClick={() => this.handleSongClick(this.state.currentSong, this.state.currentSongIndex)}
+          handleSongClick={() => this.handleSongClick(this.state.currentSong)}
           handlePrevClick={() => this.handlePrevClick()}
+          handleNextClick={() => this.handleNextClick()}
         />
       </section>
     );
