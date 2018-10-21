@@ -75,7 +75,7 @@ class Album extends Component {
   handleMouseLeave(song)
   {
     const isSameSong = this.state.currentSong === song;
-    if((!this.state.isPlaying) || (this.state.isPlaying && !isSameSong)) this.displaySongNumber(song);
+    if(!isSameSong) this.displaySongNumber(song);
   }
   displayPauseIcon(song)
   {
@@ -119,7 +119,7 @@ class Album extends Component {
           {
             this.state.album.songs.map((song, index) =>
             <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleMouseEnter(song)} onMouseLeave={() => this.handleMouseLeave(song)}>
-              <td><span id={"song_icon_"+index}>{index + 1}</span></td>
+              <td><span id={"song_icon_"+index} className={index===0 ? 'icon ion-ios-play' : ''}>{index===0 ? '' : index + 1}</span></td>
               <td>{song.title}</td>
               <td>{Math.ceil(song.duration)}</td>
             </tr>
