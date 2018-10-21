@@ -15,6 +15,7 @@ class Album extends Component {
       currentSong: album.songs[0],
       isPlaying: false,
       currentTime: 0,
+      currentVolume: 1,
       duration: album.songs[0].duration
     };
 
@@ -126,7 +127,14 @@ class Album extends Component {
    this.audioElement.currentTime = newTime;
    this.setState({ currentTime: newTime });
  }
-
+ handleVolumeChange(e) {
+   const newVolume = e.target.value;
+   this.audioElement.volume = newVolume;
+   this.setState({ currentVolume: newVolume });
+ }
+ formatTime(time) {
+   return (isNaN(time)) ? "-:--" : (Math.floor(time/60).toString() + ":" + (Math.ceil(time%60)<10 ? "0"+ Math.ceil(time%60).toString() : Math.ceil(time%60).toString()));
+ }
   render() {
     return (
       <section className="album">
@@ -150,7 +158,7 @@ class Album extends Component {
             <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleMouseEnter(song)} onMouseLeave={() => this.handleMouseLeave(song)}>
               <td><span id={"song_icon_"+index} className={index===0 ? 'icon ion-ios-play' : ''}>{index===0 ? '' : index + 1}</span></td>
               <td>{song.title}</td>
-              <td>{Math.ceil(song.duration)}</td>
+              <td>{this.formatTime(song.duration)}</td>
             </tr>
           )
           }
@@ -160,11 +168,14 @@ class Album extends Component {
           isPlaying={this.state.isPlaying}
           currentSong={this.state.currentSong}
           currentTime={this.audioElement.currentTime}
+          currentVolume={this.audioElement.volume}
           duration={this.audioElement.duration}
           handleSongClick={() => this.handleSongClick(this.state.currentSong)}
           handlePrevClick={() => this.handlePrevClick()}
           handleNextClick={() => this.handleNextClick()}
           handleTimeChange={(e) => this.handleTimeChange(e)}
+          handleVolumeChange={(e) => this.handleVolumeChange(e)}
+          formatTime={(e) => this.formatTime(e)}
         />
       </section>
     );
