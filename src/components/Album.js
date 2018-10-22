@@ -135,6 +135,7 @@ class Album extends Component {
  formatTime(time) {
    return (isNaN(time)) ? "-:--" : (Math.floor(time/60).toString() + ":" + (Math.ceil(time%60)<10 ? "0"+ Math.ceil(time%60).toString() : Math.ceil(time%60).toString()));
  }
+
   render() {
     return (
       <section className="album">
