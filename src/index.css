@@ -12,3 +12,52 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+header {
+  padding: 154px 0 100px;
+}
+
+@media (min-width: 992px) {
+  header {
+    padding: 156px 0 100px;
+  }
+}
+
+section {
+  padding: 0;
+}
+
+.nav-item {
+  padding: 10px;
+  color: white;
+}
+.libraryList {
+    text-align: center;
+}
+.list-group {
+  margin-top: 10px;
+  width: 50%;
+  display: inline-block;
+  text-align: left;
+}
+.libraryImg {
+  float: left;
+  width: 221px;
+  display: inline;
+}
+.albumHeader {
+  text-align: center;
+}
+.bg-primary-modified {
+  max-height: 470px;
+}
+
+/* Player Controls */
+.playerDiv {
+    text-align: center;
+}
+.playerButtons {
+  margin: 2px 2px 2px 2px;
+}
+.playerControls {
+  padding: 5px 5px 5px 5px;
+}

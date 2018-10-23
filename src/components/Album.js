@@ -137,34 +137,50 @@ class Album extends Component {
  }
 
   render() {
+    let playerStyles = {
+      width: '100%'
+    };
     return (
-      <section className="album">
-        <section id="album-info">
-          <img id="album-cover-art" src={this.state.album.albumCover} alt={this.state.album.title}/>
-          <div className="album-details">
-          <h1 id="album-title">{this.state.album.title}</h1>
-          <h2 className="artist">{this.state.album.artist}</h2>
-          <div id="release-info">{this.state.album.releaseInfo}</div>
+    <section className="album">
+      <header className="bg-primary text-white">
+        <div className="col-md-12">
+          <div className="row albumCenter">
+              <div className="col-md-6 text-right">
+                <img id="album-cover-art thumbnail" src={this.state.album.albumCover} alt={this.state.album.title} width='222px'/>
+              </div>
+              <div className="col-md-6 text-left">
+                <div className="container">
+                  <h1>{this.state.album.title}</h1>
+                  <h5>by {this.state.album.artist}</h5>
+                  <p className="lead">{this.state.album.releaseInfo}</p>
+                </div>
+              </div>
           </div>
-        </section>
-        <table id="song-list">
-          <colgroup>
-            <col id="song-number-column" />
-            <col id="song-title-column" />
-            <col id="song-duration-column" />
-          </colgroup>
-          <tbody>
-          {
-            this.state.album.songs.map((song, index) =>
-            <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleMouseEnter(song)} onMouseLeave={() => this.handleMouseLeave(song)}>
-              <td><span id={"song_icon_"+index} className={index===0 ? 'icon ion-ios-play' : ''}>{index===0 ? '' : index + 1}</span></td>
-              <td>{song.title}</td>
-              <td>{this.formatTime(song.duration)}</td>
-            </tr>
-          )
-          }
-          </tbody>
-        </table>
+        </div>
+      </header>
+
+        <div className="card" style={playerStyles}>
+          <div className="card-section">
+            <table id="song-list" className="table">
+              <colgroup>
+                <col id="song-number-column" />
+                <col id="song-title-column" />
+                <col id="song-duration-column" />
+              </colgroup>
+              <tbody>
+              {
+                this.state.album.songs.map((song, index) =>
+                <tr className="song" key={index} onClick={() => this.handleSongClick(song)} onMouseEnter={() => this.handleMouseEnter(song)} onMouseLeave={() => this.handleMouseLeave(song)}>
+                  <td><span id={"song_icon_"+index} className={index===0 ? 'icon ion-ios-play' : ''}>{index===0 ? '' : index + 1}</span></td>
+                  <td>{song.title}</td>
+                  <td>{this.formatTime(song.duration)}</td>
+                </tr>
+              )
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
         <PlayerBar
           isPlaying={this.state.isPlaying}
           currentSong={this.state.currentSong}
